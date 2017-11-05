@@ -44,7 +44,7 @@ public:
     }
   }
 
-  void dim_on() {
+  void on() {
     if (m_is_dim_on)
       return;
     m_is_dim_on = true;      
@@ -55,7 +55,7 @@ public:
     }
   }
 
-  void dim_off() {
+  void off() {
     if (!m_is_dim_on)
       return;
     m_is_dim_on = false;      
