@@ -125,5 +125,5 @@ BUILD/K64F/GCC_ARM/./main.o: main.cpp BUILD/K64F/GCC_ARM/mbed_config.h \
  mbed-os/platform/ATCmdParser.h mbed-os/platform/FileSystemHandle.h \
  mbed-os/platform/FileHandle.h mbed-os/platform/DirHandle.h \
  mbed-os/platform/CriticalSectionLock.h mbed-os/platform/DeepSleepLock.h \
- mbed-os/platform/Callback.h mbed-os/platform/FunctionPointer.h \
+ mbed-os/platform/Callback.h mbed-os/platform/FunctionPointer.h DIMMING.h \
  WS2812/WS2812.h PixelArray/PixelArray.h
