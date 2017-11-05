@@ -18,7 +18,8 @@ public:
     
     m_px = new PixelArray(m_led_nums);
     m_dimming_level = 0.05; // pre-defined dimming level value
-    m_dimming_step_time = 0.05; // Each pre-defined dimming level's staying time. 
+    m_dimming_step_time = 0.05; // Each pre-defined dimming level's staying time.
+    m_is_dim_on = false;
   }
   ~Dimming() {
     delete m_ws;
@@ -28,13 +29,11 @@ public:
   // level should be 0.0 to 1.0
   void set_px(double level) {
     int adjusted_level = (int)(255 * level);
-    printf("adj level: %d", adjusted_level);
     int leveled_color_r = adjusted_level * 65536;
     int leveled_color_g = adjusted_level * 256;
     int leveled_color_b = adjusted_level * 1;
     int color = leveled_color_r + leveled_color_g + leveled_color_b;  
     for (int i = 0; i < m_led_nums; i++) {
-      printf("strip color: %x\n", color);
       m_px->Set(i, color);
     } 
   }
@@ -46,6 +45,9 @@ public:
   }
 
   void dim_on() {
+    if (m_is_dim_on)
+      return;
+    m_is_dim_on = true;      
     for(double i = 0.0; i <= 1.0; i+= m_dimming_level) {
       set_px(i);
       set_light();
@@ -54,6 +56,9 @@ public:
   }
 
   void dim_off() {
+    if (!m_is_dim_on)
+      return;
+    m_is_dim_on = false;      
     for(double i = 1.0; i >= 0.0; i-= m_dimming_level) {
       set_px(i);
       set_light();
@@ -70,10 +75,15 @@ public:
   void set_dimming_step_time(double sec) {
     m_dimming_step_time = sec;
   }
+
+  bool is_light_on() {
+    return m_is_dim_on;
+  }
 private:
   WS2812* m_ws;
   PixelArray* m_px;
   int m_led_nums = 12;
   double m_dimming_level;
   double m_dimming_step_time;
+  bool m_is_dim_on;
 };
