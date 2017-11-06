@@ -1,5 +1,12 @@
 #include "mbed.h"
 #include "Dimming.h"
+// For K64F, wifi driver port
+#ifdef TARGET_K64F
+//#include "wifi_k64f.h"
+#endif
+// temp & humidity sensor
+#include "DHT.h"
+
 
 enum EventList {
   ButtonOff,
@@ -7,9 +14,10 @@ enum EventList {
 };
 
 Dimming dim(D9);
-InterruptIn button(D0);
+InterruptIn button(D2);
 EventQueue queue;
 Thread eventThread;
+DHT sensor(D7, DHT11);
 Serial pc(USBTX, USBRX);
 
 void dispatcher(int event_type) {
@@ -26,6 +34,9 @@ void dispatcher(int event_type) {
 }
 int main()
 {
+#ifdef TARGET_K64F
+  //connect_wifi();
+#endif
   eventThread.start(callback(&queue, &EventQueue::dispatch_forever));
 
   button.fall(queue.event(dispatcher, ButtonOff));
@@ -34,5 +45,23 @@ int main()
   // All the event from sensor should be sent to dispatcher function with params;
   // example
   // queue.event(dispatcher, TestSensorReaded, value1);
-  while (1) {}
+
+  int error = 0;
+  float h = 0.0f, c = 0.0f, f = 0.0f, k = 0.0f, dp = 0.0f, dpf = 0.0f;
+  while (1) {
+    wait(2.0f);
+    error = sensor.readData();
+    if (0 == error) {
+        c   = sensor.ReadTemperature(CELCIUS);
+        f   = sensor.ReadTemperature(FARENHEIT);
+        k   = sensor.ReadTemperature(KELVIN);
+        h   = sensor.ReadHumidity();
+        dp  = sensor.CalcdewPoint(c, h);
+        dpf = sensor.CalcdewPointFast(c, h);
+        pc.printf("Temperature in Kelvin: %4.2f, Celcius: %4.2f, Farenheit %4.2f\n", k, c, f);
+        pc.printf("Humidity is %4.2f, Dewpoint: %4.2f, Dewpoint fast: %4.2f\n", h, dp, dpf);
+    } else {
+        pc.printf("Error: %d\n", error);
+    }
+  }
 }

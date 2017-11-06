@@ -6,5 +6,31 @@
           "platform.stdio-convert-newlines":true,
           "mbed-trace.enable": null
       }
-  }
+  },
+  "config": {
+    "network-interface":{
+        "help": "Options are ETHERNET, WIFI_ESP8266, WIFI_ODIN",
+        "value": "WIFI_ESP8266"
+    },
+    "wifi-ssid": {
+        "help": "WiFi SSID",
+        "value": "\"eawifi\""
+    },
+    "wifi-password": {
+        "help": "WiFi Password",
+        "value": "\"play4free\""
+    },
+    "wifi-tx": {
+        "help": "TX pin for serial connection to external device",
+        "value": "D1"
+    },
+    "wifi-rx": {
+        "help": "RX pin for serial connection to external device",
+        "value": "D0"
+    },
+    "developer-mode": {
+        "help": "Enable Developer mode to skip Factory enrollment",
+        "value": 1
+    }
+}
 }
