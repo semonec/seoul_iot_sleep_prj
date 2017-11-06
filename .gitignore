@@ -1,1 +1,6 @@
 BUILD/
+esp8266-driver/
+mbed-os/
+WS2812/
+DHT/
+PixelArray/
