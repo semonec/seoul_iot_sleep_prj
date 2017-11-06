@@ -2,10 +2,11 @@
 #include "Dimming.h"
 // For K64F, wifi driver port
 #ifdef TARGET_K64F
-//#include "wifi_k64f.h"
+#include "wifi_k64f.h"
 #endif
 // temp & humidity sensor
 #include "DHT.h"
+#include "simplem2mclient.h"
 
 
 enum EventList {
@@ -17,8 +18,11 @@ Dimming dim(D9);
 InterruptIn button(D2);
 EventQueue queue;
 Thread eventThread;
-DHT sensor(D7, DHT11);
+DHT sensor(D4, DHT11);
 Serial pc(USBTX, USBRX);
+
+// DECLARE RESOURCES HERE
+static M2MResource* message_res; // Resource to hold a string message
 
 void dispatcher(int event_type) {
   pc.printf("Event Dispatcher: eventType: %d\n", event_type);
@@ -35,12 +39,23 @@ void dispatcher(int event_type) {
 int main()
 {
 #ifdef TARGET_K64F
-  //connect_wifi();
+  pc.printf("connect wifi\n");
+  connect_wifi();
 #endif
   eventThread.start(callback(&queue, &EventQueue::dispatch_forever));
 
   button.fall(queue.event(dispatcher, ButtonOff));
   button.rise(queue.event(dispatcher, ButtonOn));
+
+  // MBED cloud initializing
+      // SimpleClient is used for registering and unregistering resources to a server.
+  SimpleM2MClient mbedClient;
+  mbedClient.start_client();
+  
+  if (!mbedClient.init()) {
+      printf("Initialization failed, exiting application!\n");
+      return 1;
+  }
 
   // All the event from sensor should be sent to dispatcher function with params;
   // example

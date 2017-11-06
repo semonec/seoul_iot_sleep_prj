@@ -4,3 +4,5 @@ mbed-os/
 WS2812/
 DHT/
 PixelArray/
+mbed-cloud-client-example-restricted-hackathon-workshop/
+*/mbed_cloud_dev_credentials.c
